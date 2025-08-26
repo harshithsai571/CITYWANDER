@@ -6,10 +6,12 @@ const path = require("path");
 const connectDB = require("./db");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
+// ✅ Connect Database
 connectDB();
 
+// ✅ Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "../frontend")));
@@ -30,12 +32,17 @@ app.get("/add-place", (_, res) => res.sendFile(path.join(__dirname, "../frontend
 app.get("/cities", (_, res) => res.sendFile(path.join(__dirname, "../frontend/cities.html")));
 app.get("/city", (_, res) => res.sendFile(path.join(__dirname, "../frontend/city.html")));
 app.get("/place", (_, res) => res.sendFile(path.join(__dirname, "../frontend/place.html")));
-app.get("/travel-guide", (_, res) =>res.sendFile(path.join(__dirname, "../frontend/travel-guide.html")));
+app.get("/travel-guide", (_, res) =>
+  res.sendFile(path.join(__dirname, "../frontend/travel-guide.html"))
+);
 
+// ✅ 404 handler
 app.use((req, res) => {
   res.status(404).send("404 Not Found");
 });
 
+// ✅ Start server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });
