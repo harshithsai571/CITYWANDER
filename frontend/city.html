@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explore City - CityWander</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+    #cityTitle {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      color: #0077b6;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .controls input[type="text"], .controls select {
+      padding: 0.7rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      flex: 1;
+      min-width: 200px;
+    }
+    .place-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .place-card {
+      background: #fff;
+      width: 260px;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .place-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .place-card h3 {
+      margin: 0.5rem 0;
+      color: #333;
+    }
+    .place-card p {
+      margin: 0.2rem 0;
+      color: #555;
+    }
+    .place-card button {
+      margin-top: 0.6rem;
+      background: #0077b6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<script src="js/header.js"></script>
+<script>renderHeader();</script>
+
+<div class="container">
+  <h2 id="cityTitle">Explore Places</h2>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Search places by name..." />
+    <select id="categorySelect">
+      <option value="all">All Categories</option>
+      <option value="temple">Temple</option>
+      <option value="park">Park</option>
+      <option value="hotel">Hotel</option>
+      <option value="attraction">Attraction</option>
+    </select>
+  </div>
+
+  <div id="placesList" class="place-grid"></div>
+</div>
+
+<!-- Footer -->
+<script src="js/footer.js"></script>
+<script>renderFooter();</script>
+
+<script>
+  let allPlaces = [];
+
+  async function loadCityAndPlaces() {
+    const params = new URLSearchParams(window.location.search);
+    const cityId = params.get("id");
+    if (!cityId) return alert("City ID missing");
+
+    try {
+      // Fetch city details
+      const cityRes = await fetch(`/api/cities/${cityId}`);
+      const city = await cityRes.json();
+      document.getElementById("cityTitle").innerText = `Explore Places in ${city.name}`;
+
+      // Fetch places for the city
+      const res = await fetch(`/api/places/${cityId}`);
+      allPlaces = await res.json();
+
+      filterAndRender();
+
+    } catch (err) {
+      console.error("Failed to load:", err);
+      alert("Failed to load places.");
+    }
+  }
+
+  function filterAndRender() {
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+    const category = document.getElementById("categorySelect").value;
+
+    let filtered = allPlaces.filter(place => {
+      const matchesSearch = place.name.toLowerCase().includes(searchTerm);
+      const matchesCategory = category === "all" || place.category === category;
+      return matchesSearch && matchesCategory;
+    });
+
+    renderPlaces(filtered);
+  }
+
+  function renderPlaces(places) {
+    const container = document.getElementById("placesList");
+    container.innerHTML = "";
+
+    if (places.length === 0) {
+      container.innerHTML = "<p>No places match your criteria.</p>";
+      return;
+    }
+
+    for (const place of places) {
+      const card = document.createElement("div");
+      card.className = "place-card";
+      card.innerHTML = `
+        <img src="${place.images[0]}" alt="${place.name}">
+        <h3>${place.name}</h3>
+        <p><strong>Category:</strong> ${place.category}</p>
+        <button onclick="window.location.href='place.html?id=${place._id}'">Explore</button>
+      `;
+      container.appendChild(card);
+    }
+  }
+
+  // Event listeners
+  document.getElementById("searchInput").addEventListener("input", filterAndRender);
+  document.getElementById("categorySelect").addEventListener("change", filterAndRender);
+
+  loadCityAndPlaces();
+</script>
+
+</body>
+</html>
+

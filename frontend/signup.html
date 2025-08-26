@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join CityWander</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" href="css/footer.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* Your existing styles are preserved as-is */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: #f5f9fc;
+    }
+    header {
+      background-color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0096c7;
+    }
+    nav {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    nav input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+    nav .btn-login, nav .btn-signup {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-login {
+      background-color: transparent;
+      color: #0096c7;
+      border: 1px solid #0096c7;
+    }
+    .btn-signup {
+      background-color: #0096c7;
+      color: #fff;
+    }
+    .signup-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 3rem 1rem;
+    }
+    .signup-container {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .signup-container h1 {
+      margin-bottom: 1rem;
+      color: #1d3557;
+    }
+    .signup-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .signup-container input {
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper input {
+      width: 100%;
+    }
+    .password-wrapper .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .toggle-password svg {
+      width: 20px;
+      height: 20px;
+      fill: #666;
+    }
+    .signup-container .helper-text {
+      font-size: 0.85rem;
+      color: #888;
+      text-align: left;
+      margin-top: -0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .signup-container button {
+      padding: 0.8rem;
+      background-color: #0096c7;
+      color: #fff;
+      border: none;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .signup-container button:hover {
+      background-color: #0077a3;
+    }
+    .signup-container p {
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+    .signup-container p a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    footer {
+      background-color: #001d3d;
+      color: #fff;
+      padding: 2rem;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    footer div {
+      flex: 1;
+      min-width: 150px;
+      margin-bottom: 1rem;
+    }
+    footer h4 {
+      margin-bottom: 0.8rem;
+    }
+    footer a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      margin: 4px 0;
+      font-size: 0.9rem;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .copyright {
+      text-align: center;
+      padding: 1rem;
+      background-color: #000814;
+      color: #ccc;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+ <div class="signup-wrapper">
+    <div class="signup-container">
+      <h1>Join CityWander</h1>
+<form id="signupForm">
+  <input type="text" name="username" placeholder="Full Name" required />
+  <input type="email" name="email" placeholder="name@example.com" required />
+  <div class="password-wrapper">
+    <input type="password" id="password" name="password" placeholder="Password" required />
+    <button type="button" class="toggle-password" onclick="togglePassword()">
+      <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 13a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+        <circle cx="12" cy="12" r="2"/>
+      </svg>
+    </button>
+  </div>
+  <div class="helper-text">Password must be at least 8 characters</div>
+  <button type="submit">Create account</button>
+</form>
+<p>Already have an account? <a href="login.html">Log in</a></p>
+    </div>
+  </div>
+
+  <script src="js/footer.js"></script>
+<script>renderFooter();</script>
+
+
+  <div class="copyright">
+    © 2025 CityWander. All rights reserved.
+  </div>
+
+<script>
+  function togglePassword() {
+    const pwd = document.getElementById("password");
+    const icon = document.getElementById("eyeIcon");
+
+    if (pwd.type === "password") {
+      pwd.type = "text";
+      icon.innerHTML = '<path d="M1 12s4.5-7.5 11-7.5S23 12 23 12s-4.5 7.5-11 7.5S1 12 1 12zm11 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>';
+    } else {
+      pwd.type = "password";
+      icon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 13a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/><circle cx="12" cy="12" r="2"/>';
+    }
+  }
+
+  document.getElementById("signupForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    const data = {
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password")
+    };
+
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+
+      if (res.status === 201 || result.msg?.includes("successfully")) {
+        alert("Signup successful!");
+        window.location.href = "/login.html";
+      } else {
+        alert(result.msg || "Signup failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    }
+  });
+</script>
+</body>
+</html>
+

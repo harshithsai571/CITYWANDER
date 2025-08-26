@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cities - CityWander</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/cities.css" />
+  <link rel="stylesheet" href="css/cities-header.css">
+  <link rel="stylesheet" href="css/footer.css">
+</head>
+<body>
+<script src="js/header.js"></script>
+<script>renderHeader();</script>
+
+
+  <header>
+    <h2 class="page-title">Explore Cities</h2>
+
+    <div class="filter-container">
+      <input type="text" id="searchInput" placeholder="Search by city name..." />
+      
+      <select id="stateFilter">
+        <option value="all">All States</option>
+        <!-- dynamic options -->
+      </select>
+    </div>
+  </header>
+
+  <main>
+    <div id="citiesContainer" class="cities-grid"></div>
+    <div id="pagination" class="pagination"></div>
+  </main>
+<script src="js/footer.js"></script>
+<script>renderFooter();</script>
+
+  <script>
+    let allCities = [];
+    let filteredCities = [];
+    let currentPage = 1;
+    const citiesPerPage = 4;
+
+    async function loadCities() {
+      try {
+        const res = await fetch("/api/cities");
+        const cities = await res.json();
+        allCities = cities;
+        filteredCities = cities;
+        populateStates(cities);
+        renderCities();
+      } catch (err) {
+        console.error("Failed to fetch cities:", err);
+        document.getElementById("citiesContainer").innerHTML = "<p>Error loading cities.</p>";
+      }
+    }
+
+    function populateStates(cities) {
+      const states = [...new Set(cities.map(city => city.state))];
+      const select = document.getElementById("stateFilter");
+
+      states.forEach(state => {
+        const opt = document.createElement("option");
+        opt.value = state;
+        opt.innerText = state;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderCities() {
+      const container = document.getElementById("citiesContainer");
+      container.innerHTML = "";
+
+      const start = (currentPage - 1) * citiesPerPage;
+      const end = start + citiesPerPage;
+      const citiesToShow = filteredCities.slice(start, end);
+
+      if (!citiesToShow.length) {
+        container.innerHTML = "<p>No cities found.</p>";
+        return;
+      }
+
+      citiesToShow.forEach(city => {
+        const card = document.createElement("div");
+        card.className = "city-card";
+        card.innerHTML = `
+          <img src="${city.images?.[0] || '/default.jpg'}" alt="${city.name}" />
+          <div class="city-info">
+            <h3>${city.name}</h3>
+            <p><strong>State:</strong> ${city.state}</p>
+            <a href="city.html?id=${city._id}&name=${encodeURIComponent(city.name)}" class="btn">Explore</a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(filteredCities.length / citiesPerPage);
+      const container = document.getElementById("pagination");
+      container.innerHTML = "";
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.className = (i === currentPage) ? "active" : "";
+        btn.addEventListener("click", () => {
+          currentPage = i;
+          renderCities();
+        });
+        container.appendChild(btn);
+      }
+    }
+
+    document.getElementById("stateFilter").addEventListener("change", () => applyFilters());
+    document.getElementById("searchInput").addEventListener("input", () => applyFilters());
+
+    function applyFilters() {
+      const state = document.getElementById("stateFilter").value.toLowerCase();
+      const keyword = document.getElementById("searchInput").value.toLowerCase();
+
+      filteredCities = allCities.filter(city => {
+        const matchState = state === "all" || city.state.toLowerCase() === state;
+        const matchSearch = city.name.toLowerCase().includes(keyword);
+        return matchState && matchSearch;
+      });
+
+      currentPage = 1;
+      renderCities();
+    }
+
+    loadCities();
+  </script>
+
+</body>
+</html>
+

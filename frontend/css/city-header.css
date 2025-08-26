@@ -1,0 +1,42 @@
+/* === Header for City Page === */
+header {
+  background: linear-gradient(to right, #00b4db, #0083b0);
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.navbar .nav-links {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+}
+
+.navbar .nav-links a {
+  color: #004d99;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-links a:hover {
+  color: #d1ecf1;
+}
+
+/* Add spacing to avoid overlap if header is fixed */
+main {
+  padding-top: 80px;
+}
+

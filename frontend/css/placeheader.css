@@ -1,0 +1,52 @@
+/* Header Styling */
+header.navbar {
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #673ab7; /* Purple look */
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #311b92;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #673ab7;
+}
+
+.nav-links .admin {
+  color: #6a1b9a;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.nav-links .admin i {
+  margin-right: 5px;
+}
+

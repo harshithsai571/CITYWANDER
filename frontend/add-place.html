@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Place - Admin</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f4f4;
+      padding: 2rem;
+    }
+    .form-container {
+      max-width: 600px;
+      background: #fff;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #0077a3;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0077a3;
+      color: white;
+      padding: 0.8rem;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005f87;
+    }
+  </style>
+</head>
+<body>
+<script src="js/header.js"></script>
+<script>renderHeader();</script>
+
+  <div class="form-container">
+    <h2>Add New Place</h2>
+    <form id="addPlaceForm">
+      <select id="city" required></select>
+      <input type="text" id="name" placeholder="Place Name" required />
+      <select id="category" required>
+        <option value="">Select Category</option>
+        <option value="temple">Temple</option>
+        <option value="park">Park</option>
+        <option value="hotel">Hotel</option>
+        <option value="attraction">Attraction</option>
+      </select>
+      <input type="text" id="location" placeholder="Location" required />
+      <textarea id="description" placeholder="Description" required></textarea>
+      <input type="number" id="ticketPrice" placeholder="Ticket Price" required />
+      <input type="text" id="timing" placeholder="Timing" required />
+      <input type="number" id="rating" placeholder="Rating (1-5)" min="1" max="5" required />
+      <input type="file" id="images" name="images[]" multiple accept="image/*" required />
+      <button type="submit">Add Place</button>
+    </form>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please log in.");
+      window.location.href = "/login.html";
+    }
+
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    if (!decoded.isAdmin) {
+      alert("Admins only.");
+      window.location.href = "/";
+    }
+
+    async function loadCities() {
+      try {
+        const res = await fetch("/api/cities");
+        const cities = await res.json();
+        const dropdown = document.getElementById("city");
+        cities.forEach(city => {
+          const option = document.createElement("option");
+          option.value = city._id;
+          option.textContent = city.name;
+          dropdown.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Failed to load cities", err);
+        alert("Failed to load cities");
+      }
+    }
+
+    document.getElementById("addPlaceForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const files = document.getElementById("images").files;
+
+      if (files.length < 1) {
+        alert("Please select at least one image.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("cityId", document.getElementById("city").value);
+      formData.append("name", document.getElementById("name").value);
+      formData.append("category", document.getElementById("category").value);
+      formData.append("location", document.getElementById("location").value);
+      formData.append("description", document.getElementById("description").value);
+      formData.append("ticketPrice", document.getElementById("ticketPrice").value);
+      formData.append("timing", document.getElementById("timing").value);
+      formData.append("rating", document.getElementById("rating").value);
+      for (let i = 0; i < files.length; i++) {
+        formData.append("images", files[i]);
+      }
+
+      try {
+        const res = await fetch("/api/places/add", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const result = await res.json();
+        alert(result.msg);
+
+        if (res.ok) {
+          this.reset();
+        }
+      } catch (err) {
+        console.error("Add Place Error", err);
+        alert("Failed to add place");
+      }
+    });
+
+    loadCities();
+  </script>
+</body>
+</html>
+

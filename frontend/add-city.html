@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add City - Admin Panel</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f4f8;
+      padding: 2rem;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #0077a3;
+      margin-bottom: 1rem;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background: #0096c7;
+      color: white;
+      padding: 0.8rem;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0077a3;
+    }
+    input[type="file"] {
+      padding: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Add New City</h2>
+    <form id="addCityForm" enctype="multipart/form-data">
+      <input type="text" id="name" name="name" placeholder="City Name" required />
+      <input type="text" id="state" name="state" placeholder="State" required />
+      <textarea id="description" name="description" placeholder="City Description" required></textarea>
+      <label><strong>City Image:</strong></label>
+      <input type="file" id="image" name="image" accept="image/*" required />
+      <button type="submit">Add City</button>
+    </form>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please log in first.");
+      window.location.href = "/login.html";
+    }
+
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    if (!decoded.isAdmin) {
+      alert("Admins only!");
+      window.location.href = "/";
+    }
+
+    const form = document.getElementById("addCityForm");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append("name", document.getElementById("name").value);
+      formData.append("state", document.getElementById("state").value);
+      formData.append("description", document.getElementById("description").value);
+      formData.append("image", document.getElementById("image").files[0]);
+
+      try {
+        const res = await fetch("/api/cities/add", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const result = await res.json();
+        alert(result.msg);
+
+        if (res.ok) form.reset();
+      } catch (err) {
+        console.error("Error adding city:", err);
+        alert("Failed to add city. Please try again later.");
+      }
+    });
+  </script>
+</body>
+</html>
+

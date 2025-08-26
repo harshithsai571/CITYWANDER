@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Place Details</title>
+  <link rel="stylesheet" href="css/place.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/cities-header.css">
+  <link rel="stylesheet" href="css/footer.css">
+</head>
+<body>
+
+  <div id="header"></div>
+
+  <div class="container">
+    <div class="place-header">
+      <h2 id="placeName">Loading...</h2>
+      <p id="placeCategory"></p>
+    </div>
+
+    <div class="gallery">
+      <img id="mainImage" class="main-image" src="" alt="Place image" />
+      <div id="thumbnails" class="thumbnails"></div>
+    </div>
+
+    <div class="details">
+      <p><strong>Location:</strong> <span id="placeLocation"></span></p>
+      <p><strong>Timing:</strong> <span id="placeTiming"></span></p>
+      <p><strong>Ticket Price:</strong> ₹<span id="placePrice"></span></p>
+      <p><strong>Rating:</strong> <span id="placeRating"></span></p>
+      <p><strong>Description:</strong></p>
+      <p id="placeDescription"></p>
+
+      <iframe id="mapFrame"></iframe>
+    </div>
+
+    <div class="suggestions">
+      <h3>Other Suggestions</h3>
+      <div id="suggestionList"></div>
+    </div>
+  </div>
+<div class="suggestions-section">
+  <h3>Other Suggestions</h3>
+  <div id="suggestedPlaces" class="suggestion-grid"></div>
+
+  <h3>Explore More Cities</h3>
+  <div id="suggestedCities" class="suggestion-grid"></div>
+</div>
+
+  <script src="js/header.js"></script>
+  <script src="js/footer.js"></script>
+<script>renderFooter();</script>
+
+  <script>
+    renderHeader();
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    async function loadPlace() {
+      if (!id) return alert("Invalid place");
+
+      const res = await fetch(`/api/places/details/${id}`);
+      const place = await res.json();
+
+      document.getElementById("placeName").innerText = place.name;
+      document.getElementById("placeCategory").innerText = "Category: " + place.category;
+      document.getElementById("placeLocation").innerText = place.location;
+      document.getElementById("placeTiming").innerText = place.timing;
+      document.getElementById("placePrice").innerText = place.ticketPrice;
+      document.getElementById("placeDescription").innerText = place.description;
+
+      document.getElementById("placeRating").innerText = "★".repeat(place.rating) + "☆".repeat(5 - place.rating);
+      document.getElementById("mainImage").src = place.images[0];
+
+      const thumbs = document.getElementById("thumbnails");
+      place.images.forEach((img, i) => {
+        const thumb = document.createElement("img");
+        thumb.src = img;
+        if (i === 0) thumb.classList.add("selected");
+
+        thumb.onclick = () => {
+          document.getElementById("mainImage").src = img;
+          document.querySelectorAll("#thumbnails img").forEach(el => el.classList.remove("selected"));
+          thumb.classList.add("selected");
+        };
+        thumbs.appendChild(thumb);
+      });
+
+      document.getElementById("mapFrame").src =
+        `https://www.google.com/maps?q=${encodeURIComponent(place.location)}&output=embed`;
+    }
+
+    async function loadSuggestions() {
+      const res = await fetch("/api/places");
+      const allPlaces = await res.json();
+
+      const suggestionList = document.getElementById("suggestionList");
+      const suggestions = allPlaces
+        .filter(p => p._id !== id)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3);
+
+      for (const s of suggestions) {
+        const card = document.createElement("div");
+        card.className = "suggestion-card";
+        card.innerHTML = `
+          <img src="${s.images[0]}" />
+          <div>
+            <h4>${s.name}</h4>
+            <p>${s.category}</p>
+            <a href="place.html?id=${s._id}">Explore →</a>
+          </div>`;
+        suggestionList.appendChild(card);
+      }
+    }
+
+    loadPlace();
+    loadSuggestions();
+    async function loadSuggestions(currentPlaceId) {
+  try {
+    // Fetch 4 random places
+    const placeRes = await fetch(`/api/places/suggestions/${currentPlaceId}`);
+    const places = await placeRes.json();
+
+    const placeContainer = document.getElementById("suggestedPlaces");
+    placeContainer.innerHTML = "";
+    places.forEach(place => {
+      const div = document.createElement("div");
+      div.className = "suggestion-card";
+      div.innerHTML = `
+        <img src="${place.images[0]}" alt="${place.name}">
+        <h4>${place.name}</h4>
+        <button onclick="window.location.href='place.html?id=${place._id}'">Explore</button>
+      `;
+      placeContainer.appendChild(div);
+    });
+
+    // Fetch 2 random cities
+    const cityRes = await fetch("/api/cities/random/shortlist");
+    const cities = await cityRes.json();
+
+    const cityContainer = document.getElementById("suggestedCities");
+    cityContainer.innerHTML = "";
+    cities.forEach(city => {
+      const div = document.createElement("div");
+      div.className = "suggestion-card";
+      div.innerHTML = `
+        <img src="${city.images[0]}" alt="${city.name}">
+        <h4>${city.name}</h4>
+        <button onclick="window.location.href='city.html?id=${city._id}'">Explore</button>
+      `;
+      cityContainer.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error("Error loading suggestions:", err);
+  }
+}
+
+  </script>
+</body>
+</html>
+

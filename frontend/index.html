@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CityWander - Discover India's Breathtaking Cities</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <script src="js/header.js"></script>
+  <script>renderHeader();</script>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Discover India's <span>Breathtaking Cities</span></h1>
+      <p>Your ultimate guide to exploring the wonders, heritage, and hidden gems of India's most beautiful destinations.</p>
+      <a href="cities.html" class="btn explore-cities">Explore Cities</a>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <img src="icons/discover.svg" alt="Discover Icon">
+          <h3>1. Discover</h3>
+          <p>Browse cities and explore the top attractions in each destination.</p>
+        </div>
+        <div class="step">
+          <img src="icons/plan.svg" alt="Plan Icon">
+          <h3>2. Plan</h3>
+          <p>Create an itinerary based on your interests and time.</p>
+        </div>
+        <div class="step">
+          <img src="icons/experience.svg" alt="Experience Icon">
+          <h3>3. Experience</h3>
+          <p>Enjoy your trip and discover the beauty of India.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Cities Section -->
+  <section class="featured-cities">
+    <div class="container">
+      <h2>Featured Cities</h2>
+      <p>From historic landmarks to modern metropolises, explore our handpicked selection of must-visit cities across India.</p>
+      <div class="city-grid" id="citiesContainer">
+        <!-- Dynamic city cards will be injected here -->
+      </div>
+      <a href="cities.html" class="btn view-all">View All Cities</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <script src="js/footer.js"></script>
+  <script>renderFooter();</script>
+
+  <!-- ✅ Fixed Dynamic City Fetching Script -->
+ <script>
+  async function loadFeaturedCities() {
+    try {
+      const res = await fetch("/api/cities");
+      const cities = await res.json();
+
+      const featured = cities.slice(0, 3); // just 3 featured cities
+      const container = document.getElementById("citiesContainer");
+      container.innerHTML = "";
+
+      featured.forEach(city => {
+        const card = document.createElement("div");
+        card.className = "city-card";
+        card.innerHTML = `
+          <img src="${city.images[0]}" alt="${city.name}" />
+          <h3>${city.name}</h3>
+          <p>${city.state}</p>
+          <button onclick="window.location.href='city.html?id=${city._id}'">Explore</button>
+        `;
+        container.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Failed to load featured cities:", err);
+    }
+  }
+
+  loadFeaturedCities();
+</script>
+
+</body>
+</html>
+
